@@ -1,16 +1,21 @@
 import React from 'react';
 
-export default function Archive({ allLogs, archiveFilter, setArchiveFilter, uniqueWards, selectedWardFilter, setSelectedWardFilter, handleLoadLogForEdit, handleToggleFavorite, handleSoftDeleteLog, handleRestoreLog, handlePermanentDelete, setCurrentView }) {
-  
+export default function Archive({ allLogs, archiveFilter, setArchiveFilter, uniqueWards, selectedWardFilter, setSelectedWardFilter, handleLoadLogForEdit, handleToggleFavorite, handleMoveToTrash, handleRestoreFromTrash, handlePermanentDelete, setCurrentView }) {
   // 필터 기준에 따른 처리
   const filteredLogs = allLogs.filter(log => {
     if (archiveFilter === 'trash') return log.isDeleted;
     if (log.isDeleted) return false;
     if (archiveFilter === 'all') return true;
-    if (archiveFilter === 'favorites') return log.isFavorite;
+    if (archiveFilter === 'favorite') return log.isFavorite;
     if (archiveFilter === 'ward') return log.ward === selectedWardFilter;
     return true;
   });
+
+  //일지 가져오기
+  const handleLoadLog = (log) => {
+    loadLogToEditor(log.id);
+    setCurrentView('TestCase');c
+  };
 
   return (
     <div className="flex-1 flex flex-col justify-between min-h-full bg-slate-50/50 text-xs text-slate-800 animate-fadeIn">
@@ -21,8 +26,8 @@ export default function Archive({ allLogs, archiveFilter, setArchiveFilter, uniq
           <span className="w-1.5 h-3.5 bg-indigo-600 rounded-full block"></span>
           📂 {archiveFilter === 'all' && '전체'}
           {archiveFilter === 'ward' && '병동별'}
-          {archiveFilter === 'favorite' && '중요 즐겨찾기'}
-          {archiveFilter === 'trash' && '휴지통 파일 관리'}
+          {archiveFilter === 'favorite' && '중요'}
+          {archiveFilter === 'trash' && '휴지통'}
         </h2>
         <button 
           type="button" 
@@ -82,7 +87,10 @@ export default function Archive({ allLogs, archiveFilter, setArchiveFilter, uniq
               {/* 왼쪽 정보 링크 */}
               <div 
                 className="flex-1 cursor-pointer min-w-0 group" 
-                onClick={() => { if (!log.isDeleted) handleLoadLogForEdit(log); }}
+                onClick={() => { 
+                  if (log.isDeleted) return;
+                  //if (!log.isDeleted) handleLoadLog(log);
+                  if (!log.isDeleted) handleLoadLogForEdit(log); }}
               >
                 <span className="text-slate-400 block text-[10px] font-mono tracking-tight">{log.date}</span>
                 <span className="text-slate-800 font-bold text-xs mt-1 block truncate group-hover:text-indigo-600 transition">
@@ -107,7 +115,7 @@ export default function Archive({ allLogs, archiveFilter, setArchiveFilter, uniq
                     </button>
                     <button 
                       type="button" 
-                      onClick={() => handleSoftDeleteLog(log.id)} 
+                      onClick={() => handleMoveToTrash(log.id)} 
                       className="bg-slate-50 border border-slate-200 text-slate-400 p-2 rounded-xl text-xs hover:bg-rose-50 hover:text-rose-500 hover:border-rose-100 transition shadow-sm active:scale-95"
                     >
                       🗑️

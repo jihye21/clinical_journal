@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
+
+import { BookHeart } from "lucide-react";
+
 import Dashboard from './components/Dashboard';
 import Archive from './components/Archive';
 import Editor from './components/Editor';
 import Dictionary from './components/Dictionary';
 import SettingModal from './components/SettingModal';
+import TestCase from './components/TestCase';
 
 import { 
   DEFAULT_SHORTCUTS, 
@@ -291,7 +295,7 @@ export default function App() {
         <header className="bg-white/80 backdrop-blur-md text-slate-800 p-4 sticky top-0 z-20 shadow-sm flex justify-between items-center border-b border-slate-100">
           <div className="flex items-center gap-2 cursor-pointer group" onClick={() => setCurrentView('dashboard')}>
             <div className="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center shadow-sm group-active:scale-95 transition">
-              <span className="text-lg">🩺</span>
+              <span className="text-lg"><BookHeart size={18} className="text-indigo-600" /></span>
             </div>
             <h1 className="text-base font-black tracking-tight bg-gradient-to-r from-indigo-600 to-indigo-800 bg-clip-text text-transparent">
               간호 포트폴리오
@@ -338,9 +342,17 @@ export default function App() {
               setCurrentView={setCurrentView}
               handleLoadLogForEdit={handleLoadLogForEdit} 
               handleToggleFavorite={handleToggleFavorite} 
-              handleSoftDeleteLog={handleMoveToTrash}
+              handleMoveToTrash={handleMoveToTrash}
               handleRestoreFromTrash={handleRestoreFromTrash}  
               handlePermanentDelete={handlePermanentDelete}
+            />
+          </div>
+        )}
+
+        {currentView === 'newCase' && (
+          <div className="flex-1 flex flex-col overflow-y-auto bg-white">
+            <TestCase 
+              setCurrentView={setCurrentView}
             />
           </div>
         )}

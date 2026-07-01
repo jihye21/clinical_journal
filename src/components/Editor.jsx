@@ -1,4 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Sun,
+  Moon,
+  BookMarked,
+  Clipboard, 
+  Calendar, 
+  Home
+} from "lucide-react";
 
 function TimelineItem({ item, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -54,7 +62,7 @@ export default function Editor({ date, setDate, ward, setWard, timelines, handle
           onClick={() => { if(onSave) onSave(); setCurrentView('dashboard'); }} 
           className="text-xs bg-white hover:bg-slate-50 active:scale-95 text-indigo-600 font-bold px-3 py-1.5 rounded-xl border border-indigo-100 transition shadow-sm"
         >
-          Main
+          <Home size={16} className="text-slate-500"/>
         </button>
       </div>
 
@@ -92,23 +100,26 @@ export default function Editor({ date, setDate, ward, setWard, timelines, handle
             <button 
               type="button" 
               onClick={() => handleApplyDutySkeleton('Day')} 
-              className="text-xs bg-white text-amber-800 font-bold py-2.5 px-3 rounded-xl border border-amber-200 shadow-sm hover:bg-amber-50/50 active:scale-95 transition"
+              className="flex gap-2 justify-center text-xs bg-white text-amber-800 font-bold py-2.5 px-3 rounded-xl border border-amber-200 shadow-sm hover:bg-amber-50/50 active:scale-95 transition"
             >
-              ☀️ Day 가져오기
+              <Sun size={16} className="text-yellow-500"/> Day
             </button>
             <button 
               type="button" 
               onClick={() => handleApplyDutySkeleton('Evening')} 
-              className="text-xs bg-white text-amber-800 font-bold py-2.5 px-3 rounded-xl border border-amber-200 shadow-sm hover:bg-amber-50/50 active:scale-95 transition"
+              className="flex gap-2 justify-center text-xs bg-white text-amber-800 font-bold py-2.5 px-3 rounded-xl border border-amber-200 shadow-sm hover:bg-amber-50/50 active:scale-95 transition"
             >
-              🌙 Evening 가져오기
+              <Moon size={16} className="text-yellow-500"/> Evening
             </button>
           </div>
         </div>
 
         {/* 실습 태그 */}
         <div className="bg-white p-3.5 rounded-2xl border border-slate-200/60 shadow-sm space-y-2.5">
-          <span className="block text-xs font-bold text-slate-400 pl-0.5">💡 자주 쓰는 실습 내용 태그 (원클릭 입력)</span>
+          <span className="flex gap-2 block text-xs font-bold text-slate-400 pl-0.5"> 
+            <BookMarked size={16} className="text-slate-500"/>
+            자주 쓰는 실습 내용 태그
+          </span>
           <div className="flex flex-wrap gap-1.5">
             {customShortcuts.map((tag) => (
               <button 
@@ -156,13 +167,13 @@ export default function Editor({ date, setDate, ward, setWard, timelines, handle
         {/* 타임라인 */}
         <div className="bg-white p-3.5 rounded-2xl border border-slate-200/60 shadow-sm space-y-3">
           <h3 className="text-xs font-black text-slate-800 border-b pb-2 flex justify-between items-center">
-            <span>📋 오늘의 타임라인</span>
+            <span className="flex gap-2"><Calendar size={16} className="text-slate-500"/> 오늘의 타임라인</span>
             <span className="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-md text-[10px] font-extrabold">{timelines.length}건</span>
           </h3>
           
           {timelines.length === 0 ? (
             <p className="text-center text-slate-400 py-12 leading-relaxed font-medium">
-              기록된 실습 내용이 없습니다.<br />위에서 듀티를 불러오거나 항목을 입력하세요.
+              기록된 실습 내용이 없습니다.<br />듀티를 불러오거나 항목을 입력하세요.
             </p>
           ) : (
             <div className="relative border-l-2 border-indigo-100 ml-2 space-y-4 py-1">
@@ -187,7 +198,7 @@ export default function Editor({ date, setDate, ward, setWard, timelines, handle
           onClick={handleCopyText}
           className="w-full rounded-xl bg-slate-900 py-3 text-xs font-bold text-white transition-all hover:bg-slate-800 active:scale-[0.99] shadow-md flex justify-center items-center gap-1.5"
         >
-          📋 현재 작성 일지 복사하기
+          <Clipboard size={16} className="text-white-500"/>일지 복사
         </button>
       </footer>
 
