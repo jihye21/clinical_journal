@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { BookHeart } from "lucide-react";
+import { BookHeart, Files } from "lucide-react";
 
 import Dashboard from './components/Dashboard';
 import Archive from './components/Archive';
@@ -17,13 +17,16 @@ import {
 } from './data/initialData';
 
 export default function App() {
+  //테스트 케이스 뷰
+  const [fileSelect, setFileSelect] = useState(false);
+
   // 글로벌 라우팅 및 독립 스크린 뷰 상태 제어
   const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard', 'editor', 'archive', 'dictionary'
   const [archiveFilter, setArchiveFilter] = useState('all'); // 'all', 'ward', 'favorite', 'trash'
-
+  
   // 실습 일지 데이터 상태
   const [allLogs, setAllLogs] = useState([]);
-  const [selectedLogId, setSelectedLogId] = useState(null);
+  const [selectedLogId, setSelectedLogId] = useState('');
 
   // 수정 중인 에디터 내부 연동 데이터 바인딩 상태
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -76,6 +79,16 @@ export default function App() {
   }, []);
 
   // 핵심 함수 
+
+  const loadLogToEditor = (logId) => {
+    const targetLog = allLogs.find(log => log.id === logId);
+    if(targetLog) {
+        setSelectedLogId(targetLog.id);
+        setDate(targetLog.date);
+        setWard(targetLog.ward);
+        setTimelines(targetLog.setTimelines);
+    }
+   };
 
   const handleCreateNewLog = () => {
     const newId = 'log-' + Date.now();
@@ -290,7 +303,7 @@ export default function App() {
   return (
     <div className="bg-white sm:bg-slate-50 min-h-screen antialiased select-none flex items-start sm:items-center justify-center">
       
-      <div className="w-full min-h-screen sm:min-h-[85vh] sm:max-w-md bg-white shadow-none sm:shadow-2xl flex flex-col justify-between relative sm:border sm:border-slate-200/60 sm:rounded-3xl overflow-hidden">
+      <div className="w-full min-h-screen sm:min-h-[85vh] sm:max-w-md bg-white shadow-none sm:shadow-2xl flex flex-col justify-between relative sm:border sm:border-slate-200/60 sm:rounded-3xl">
         
         <header className="bg-white/80 backdrop-blur-md text-slate-800 p-4 sticky top-0 z-20 shadow-sm flex justify-between items-center border-b border-slate-100">
           <div className="flex items-center gap-2 cursor-pointer group" onClick={() => setCurrentView('dashboard')}>
@@ -333,6 +346,7 @@ export default function App() {
           <div className="flex-1 flex flex-col overflow-y-auto bg-slate-50/30">
             <Archive 
               allLogs={allLogs}
+              setAllLogs={setAllLogs}
               filteredLogs={filteredLogs} 
               archiveFilter={archiveFilter} 
               setArchiveFilter={setArchiveFilter} 
@@ -345,14 +359,33 @@ export default function App() {
               handleMoveToTrash={handleMoveToTrash}
               handleRestoreFromTrash={handleRestoreFromTrash}  
               handlePermanentDelete={handlePermanentDelete}
+
+              setSelectedLogId={setSelectedLogId}
+              fileSelect={fileSelect}
+              onSelectComplete={()=>{
+                setFileSelect(false);
+                setCurrentView('newCase');
+              }}
             />
           </div>
         )}
 
-        {currentView === 'newCase' && (
-          <div className="flex-1 flex flex-col overflow-y-auto bg-white">
+        {(currentView === 'newCase' || (currentView === 'archive' && fileSelect)) && (
+          <div className={`flex-1 flex flex-col overflow-y-auto bg-white ${
+              currentView === 'archive' ? 'hidden' : 'flex'
+            }`}
+          >
             <TestCase 
+              allLogs={allLogs}
+              setAllLogs={setAllLogs}
+              selectedLogId={selectedLogId}
+
+              loadLogToEditor={loadLogToEditor}
               setCurrentView={setCurrentView}
+              onSelectMode={() => {
+                setFileSelect(true);
+                setCurrentView('archive');
+              }}
             />
           </div>
         )}

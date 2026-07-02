@@ -1,6 +1,8 @@
 import React from 'react';
 
-export default function Archive({ allLogs, archiveFilter, setArchiveFilter, uniqueWards, selectedWardFilter, setSelectedWardFilter, handleLoadLogForEdit, handleToggleFavorite, handleMoveToTrash, handleRestoreFromTrash, handlePermanentDelete, setCurrentView }) {
+export default function Archive({ allLogs, setAllLogs, archiveFilter, setArchiveFilter, uniqueWards, selectedWardFilter, setSelectedWardFilter, handleLoadLogForEdit, handleToggleFavorite, handleMoveToTrash, handleRestoreFromTrash, handlePermanentDelete, setCurrentView 
+  , fileSelect, onSelectComplete, setSelectedLogId
+}) {
   // 필터 기준에 따른 처리
   const filteredLogs = allLogs.filter(log => {
     if (archiveFilter === 'trash') return log.isDeleted;
@@ -13,8 +15,16 @@ export default function Archive({ allLogs, archiveFilter, setArchiveFilter, uniq
 
   //일지 가져오기
   const handleLoadLog = (log) => {
-    loadLogToEditor(log.id);
-    setCurrentView('TestCase');c
+    setAllLogs(prevLogs => {
+      const isExist = prevLogs.some(item => item.id === log.id);
+      return isExist ? prevLogs : [...prevLogs, log];
+    });
+
+    setSelectedLogId(log.id);
+    setCurrentView('newCase');
+    onSelectComplete();
+
+    return;
   };
 
   return (
@@ -89,8 +99,8 @@ export default function Archive({ allLogs, archiveFilter, setArchiveFilter, uniq
                 className="flex-1 cursor-pointer min-w-0 group" 
                 onClick={() => { 
                   if (log.isDeleted) return;
-                  //if (!log.isDeleted) handleLoadLog(log);
-                  if (!log.isDeleted) handleLoadLogForEdit(log); }}
+                  if (fileSelect) handleLoadLog(log);
+                  else  if (!log.isDeleted) handleLoadLogForEdit(log); }}
               >
                 <span className="text-slate-400 block text-[10px] font-mono tracking-tight">{log.date}</span>
                 <span className="text-slate-800 font-bold text-xs mt-1 block truncate group-hover:text-indigo-600 transition">
